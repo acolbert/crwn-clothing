@@ -24,3 +24,6 @@ yarn-error.log*
 
 #firebase Config
 /src/firebase
+
+#Stripe
+/src/stripeKey
