@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './sign-up.styles.scss';
 
 import FormInput from '../form-input/form-input.componet';
@@ -6,23 +6,14 @@ import CustomButton from '../custom-button/custom-button.component';
 import {auth, createUserProfileDocument} from '../../firebase/firebase.utils';
 
 
-class SignUp extends React.Component {
+const SignUp = () => {
 
-    constructor(props) {
-        super(props);
+    const [userCredentials, setCredentials] = useState({ displayName : '', email : '', password: '', confirmPassword: ''})
+    const {displayName, email, password, confirmPassword} = userCredentials;
 
-        this.state = {
-            displayName : '',
-            email : '',
-            password: '',
-            confirmPassword: ''
-        }
-    }
 
-    handleSubmit = async event => {
+    const handleSubmit = async event => {
         event.preventDefault();
-
-        const {displayName, email, password, confirmPassword} = this.state;
 
         if (password !== confirmPassword) {
             alert("passwords do not match");
@@ -34,7 +25,7 @@ class SignUp extends React.Component {
             const {user} = await auth.createUserWithEmailAndPassword(email, password);
             await createUserProfileDocument(user, {displayName});
             
-            this.setState({
+            setCredentials({
                 displayName : '',
                 email : '',
                 password: '',
@@ -47,35 +38,33 @@ class SignUp extends React.Component {
         
     };
 
-    handleChange = event => {
+    const handleChange = event => {
         
         const {value, name} = event.target;
 
         this.setState({
+            ...userCredentials,
             [name] : value });
     };
 
-    render() {
-
-        const {displayName, email, password, confirmPassword} = this.state;
 
         return (
             <div className='sign-up'>
                 <h2 className="title"> I do not have an account</h2>
                 <span> Sign un with your email and password</span>
 
-                <form className='sign-up-form' onSubmit={this.handleSubmit}>
-                    <FormInput name="displayName" type="displayName" label="Display Name" value={displayName} handleChange={this.handleChange} required />    
-                    <FormInput name="email" type="email" label="Email" value={email} handleChange={this.handleChange} required />
-                    <FormInput name="password" type="password" label="Password" value={password} handleChange={this.handleChange} required/>
-                    <FormInput name="confirmPassword" type="password" label="ConfirmPassword" value={confirmPassword} handleChange={this.handleChange} required/>
+                <form className='sign-up-form' onSubmit={handleSubmit}>
+                    <FormInput name="displayName" type="displayName" label="Display Name" value={displayName} handleChange={handleChange} required />    
+                    <FormInput name="email" type="email" label="Email" value={email} handleChange={handleChange} required />
+                    <FormInput name="password" type="password" label="Password" value={password} handleChange={handleChange} required/>
+                    <FormInput name="confirmPassword" type="password" label="ConfirmPassword" value={confirmPassword} handleChange={handleChange} required/>
                     
                     <CustomButton type='submit'> Sign Up </CustomButton>
 
                 </form>
             </div>
         );
-    }
+    
 
 }
 
